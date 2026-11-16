@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in — Madrasti</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c2410c'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-side zellige">
+      <a class="brand" href="/"><div class="logo">م</div><div class="name">Madrasti<small>مدرستي</small></div></a>
+      <div>
+        <h2>Learn and teach the Moroccan curriculum, anywhere.</h2>
+        <p style="opacity:.85">From Primaire to 2ème Bac — lessons, assignments, quizzes and progress in one place.</p>
+      </div>
+      <div class="ar" style="font-size:1.4rem;opacity:.85">اطلبوا العلم من المهد إلى اللحد</div>
+    </div>
+    <div class="auth-main">
+      <div class="auth-box">
+        <div class="auth-top"><button class="theme-btn" data-theme-toggle type="button">🌙</button></div>
+        <div class="tabs" id="tabs">
+          <button type="button" id="tabLogin" class="active">Log in</button>
+          <button type="button" id="tabRegister">Create account</button>
+        </div>
+        <div id="err" class="error-msg hidden" role="alert"></div>
+
+        <form id="loginForm" novalidate>
+          <h1>Welcome back 👋</h1>
+          <p class="muted">Log in to your space.</p>
+          <div class="field"><label for="le">Email</label><input id="le" type="email" name="email" required autocomplete="email"></div>
+          <div class="field"><label for="lp">Password</label><input id="lp" type="password" name="password" required autocomplete="current-password"></div>
+          <button class="btn block" type="submit">Log in</button>
+          <div class="demo-box">
+            <b>Try the demo</b> <span class="muted">(password: password123)</span><br>
+            <button type="button" class="btn secondary sm" data-demo="teacher@madrasti.ma">👩‍🏫 Demo teacher</button>
+            <button type="button" class="btn secondary sm" data-demo="student@madrasti.ma">🎒 Demo student</button>
+          </div>
+        </form>
+
+        <form id="registerForm" class="hidden" novalidate>
+          <h1>Create your account</h1>
+          <p class="muted">Choose who you are.</p>
+          <div class="role-pick">
+            <input type="radio" name="role" id="rs" value="student" checked><label for="rs"><span class="e">🎒</span>Student</label>
+            <input type="radio" name="role" id="rt" value="teacher"><label for="rt"><span class="e">👩‍🏫</span>Teacher</label>
+          </div>
+          <div class="field"><label for="rn">Full name</label><input id="rn" type="text" name="name" required autocomplete="name"></div>
+          <div class="field"><label for="re">Email</label><input id="re" type="email" name="email" required autocomplete="email" placeholder="you@gmail.com">
+            <div class="hint" id="emailHint">We will send a 6-digit code to this address to check it is yours.</div></div>
+          <div class="field"><label for="rp">Password</label><input id="rp" type="password" name="password" required minlength="6" autocomplete="new-password"><div class="hint">At least 6 characters</div></div>
+          <div class="field" id="levelField"><label for="rl">My level</label><select id="rl" name="level"></select></div>
+          <div class="field hidden" id="subjectField"><label for="rsub">Subject I teach</label><select id="rsub" name="subject"></select></div>
+          <div class="field"><label for="rc">City</label><select id="rc"><option value="">Loading cities…</option></select></div>
+          <div class="field"><label for="rsc">School</label><select id="rsc" disabled><option value="">Choose a city first</option></select>
+            <input id="rso" type="text" class="hidden" placeholder="Write the name of your school" style="margin-top:.5rem" maxlength="120">
+            <div class="hint">School list from OpenStreetMap. If yours is missing, choose "My school is not in the list".</div></div>
+          <button class="btn block" type="submit">Create account</button>
+        </form>
+
+        <form id="verifyForm" class="hidden" novalidate>
+          <h1>Check your email 📬</h1>
+          <p class="muted">We sent a 6-digit code to <b id="vEmail"></b>. Write it here to confirm your address.</p>
+          <div id="devNote" class="notice warn hidden"></div>
+          <div class="field"><label for="vc">Verification code</label>
+            <input id="vc" class="code-input" type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="······"></div>
+          <button class="btn block" type="submit">Confirm my email</button>
+          <p class="small muted" style="margin-top:1rem;text-align:center">
+            No email? Look in your spam folder, or <button type="button" class="btn ghost sm" id="resend">send a new code</button><br>
+            <button type="button" class="btn ghost sm" id="changeEmail">← Use another email</button>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="/js/common.js"></script>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const err = $('err');
+    const showErr = (m) => { err.textContent = m; err.classList.remove('hidden'); err.scrollIntoView({ block: 'nearest' }); };
+    $('rl').innerHTML = options(LEVELS, '2ème Année Bac');
+    $('rsub').innerHTML = options(SUBJECTS);
+
+    let getPlace = () => ({ city: '', school: '' });
+    mountCitySchool({ cityEl: $('rc'), schoolEl: $('rsc'), otherEl: $('rso') }).then((fn) => { getPlace = fn; });
+
+    function show(which) {
+      $('loginForm').classList.toggle('hidden', which !== 'login');
+      $('registerForm').classList.toggle('hidden', which !== 'register');
+      $('verifyForm').classList.toggle('hidden', which !== 'verify');
+      $('tabs').classList.toggle('hidden', which === 'verify');
+      $('tabLogin').classList.toggle('active', which === 'login');
+      $('tabRegister').classList.toggle('active', which === 'register');
+      err.classList.add('hidden');
+    }
+    $('tabLogin').onclick = () => { history.replaceState(null, '', '/auth' + location.search); show('login'); };
+    $('tabRegister').onclick = () => { history.replaceState(null, '', '/auth' + location.search + '#register'); show('register'); };
+    show(location.hash === '#register' ? 'register' : 'login');
+
+    document.querySelectorAll('input[name=role]').forEach((r) => r.onchange = () => {
+      const t = document.querySelector('input[name=role]:checked').value === 'teacher';
+      $('levelField').classList.toggle('hidden', t);
+      $('subjectField').classList.toggle('hidden', !t);
+    });
+
+    // Email help: catch common typing mistakes while the user writes
+    const TYPOS = { 'gmial.com': 'gmail.com', 'gmai.com': 'gmail.com', 'gmal.com': 'gmail.com', 'gamil.com': 'gmail.com', 'gmail.co': 'gmail.com', 'gmail.con': 'gmail.com', 'gmail.fr': 'gmail.com', 'gnail.com': 'gmail.com', 'hotmial.com': 'hotmail.com', 'hotmai.com': 'hotmail.com', 'hotmail.con': 'hotmail.com', 'outlok.com': 'outlook.com', 'outloo.com': 'outlook.com', 'yahooo.com': 'yahoo.com', 'yaho.com': 'yahoo.com', 'yahoo.con': 'yahoo.com' };
+    const emailOk = (e) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e);
+    const hintDefault = $('emailHint').textContent;
+    $('re').addEventListener('input', () => {
+      const v = $('re').value.trim().toLowerCase();
+      const hint = $('emailHint');
+      const domain = v.split('@')[1] || '';
+      hint.style.color = '';
+      if (TYPOS[domain]) {
+        const fixed = v.split('@')[0] + '@' + TYPOS[domain];
+        hint.innerHTML = `Did you mean <button type="button" class="btn ghost sm" id="fixEmail">${esc(fixed)}</button>?`;
+        hint.style.color = 'var(--warn)';
+        $('fixEmail').onclick = () => { $('re').value = fixed; $('re').dispatchEvent(new Event('input')); };
+      } else if (v && v.includes('@') && domain.includes('.') && !emailOk(v)) {
+        hint.textContent = 'This email address does not look right.';
+        hint.style.color = 'var(--bad)';
+      } else hint.textContent = hintDefault;
+    });
+
+    function done({ token, user }) {
+      store.save(token, user);
+      const next = new URLSearchParams(location.search).get('next');
+      location.href = next && next.startsWith('/' + user.role) ? next : '/' + user.role;
+    }
+
+    // ----- Email verification step -----
+    let pendingEmail = '';
+    let resendTimer = null;
+    function startVerify(info) {
+      pendingEmail = info.email;
+      show('verify');
+      $('vEmail').textContent = info.email;
+      $('vc').value = '';
+      const note = $('devNote');
+      if (info.devCode) {
+        note.innerHTML = `<b>Test mode:</b> Gmail sending is not set up yet, so no real email was sent. Your code is <b style="font-size:1.1rem;letter-spacing:.15em">${esc(info.devCode)}</b>.<br><span class="small">To send real emails, fill SMTP_USER and SMTP_PASS in the <code>.env</code> file.</span>`;
+        note.classList.remove('hidden');
+      } else note.classList.add('hidden');
+      countdown(info.resendIn || 60);
+      $('vc').focus();
+    }
+    function countdown(sec) {
+      const btn = $('resend');
+      clearInterval(resendTimer);
+      let left = sec;
+      const draw = () => { btn.disabled = left > 0; btn.textContent = left > 0 ? `send a new code (${left}s)` : 'send a new code'; };
+      draw();
+      resendTimer = setInterval(() => { left--; draw(); if (left <= 0) clearInterval(resendTimer); }, 1000);
+    }
+    $('vc').addEventListener('input', () => { $('vc').value = $('vc').value.replace(/\D/g, '').slice(0, 6); if ($('vc').value.length === 6) $('verifyForm').requestSubmit(); });
+    let verifying = false;
+    $('verifyForm').onsubmit = async (e) => {
+      e.preventDefault();
+      if (verifying) return;
+      const code = $('vc').value.trim();
+      if (code.length !== 6) return showErr('Write the 6 digits of the code');
+      const btn = e.target.querySelector('button[type=submit]');
+      verifying = true; btn.disabled = true; err.classList.add('hidden');
+      try { done(await api('/auth/verify', { method: 'POST', body: { email: pendingEmail, code } })); }
+      catch (x) { showErr(x.message); $('vc').value = ''; $('vc').focus(); }
+      finally { verifying = false; btn.disabled = false; }
+    };
+    $('resend').onclick = async () => {
+      $('resend').disabled = true; err.classList.add('hidden');
+      try { const info = await api('/auth/resend', { method: 'POST', body: { email: pendingEmail } }); startVerify(info); toast('A new code was sent'); }
+      catch (x) { showErr(x.message); countdown(x.status === 429 ? 30 : 0); }
+    };
+    $('changeEmail').onclick = () => { clearInterval(resendTimer); show('register'); };
+
+    // ----- Log in -----
+    $('loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const d = formData(e.target);
+      if (!d.email || !d.password) return showErr('Enter your email and password');
+      const btn = e.target.querySelector('button[type=submit]');
+      btn.disabled = true;
+      try { done(await api('/auth/login', { method: 'POST', body: d })); }
+      catch (x) { if (x.data && x.data.needsVerification) { startVerify(x.data); toast('Confirm your email to continue'); } else showErr(x.message); }
+      finally { btn.disabled = false; }
+    };
+    document.querySelectorAll('[data-demo]').forEach((b) => b.onclick = () => {
+      $('le').value = b.dataset.demo; $('lp').value = 'password123';
+      $('loginForm').requestSubmit();
+    });
+
+    // ----- Create account -----
+    $('registerForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const d = formData(e.target);
+      d.email = (d.email || '').trim().toLowerCase();
+      Object.assign(d, getPlace());
+      if (!d.name.trim() || !d.email || !d.password) return showErr('Fill in your name, email and password');
+      if (!emailOk(d.email)) return showErr('This email address is not valid');
+      if (d.password.length < 6) return showErr('Password must be at least 6 characters');
+      if (!d.city) return showErr('Choose your city');
+      if (!d.school) return showErr($('rsc').value ? 'Write the name of your school' : 'Choose your school');
+      const btn = e.target.querySelector('button[type=submit]');
+      btn.disabled = true; btn.textContent = 'Sending the code…';
+      try { startVerify(await api('/auth/register', { method: 'POST', body: d })); }
+      catch (x) { showErr(x.message); }
+      finally { btn.disabled = false; btn.textContent = 'Create account'; }
+    };
+  </script>
+</body>
+</html>

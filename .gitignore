@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Local database and logs
+data/
+*.log
+
+# Files uploaded by users
+uploads/*
+!uploads/.gitkeep
+
+# Private settings (Gmail password, session secret)
+.env
+
+# Local tools and temporary files
+.claude/
+share-link.txt
+seed-data/osm-raw.json
+.DS_Store
+Thumbs.db

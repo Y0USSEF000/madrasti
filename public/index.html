@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Madrasti — Moroccan curriculum platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c2410c'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='white' font-family='serif'%3E%D9%85%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="zellige hero">
+    <nav class="site-nav">
+      <a class="brand" href="/" style="color:#fff"><div class="logo">م</div><div class="name">Madrasti<small style="color:#cfe3de">مدرستي</small></div></a>
+      <div class="links"><button class="theme-btn on-dark" data-theme-toggle type="button">🌙</button><span id="navLinks" style="display:flex;gap:.6rem">
+        <a class="btn secondary" href="/auth" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)">Log in</a>
+        <a class="btn accent" href="/auth#register">Create account</a>
+      </span></div>
+    </nav>
+    <div class="hero-inner">
+      <div>
+        <div class="ar-title">المنهاج الدراسي المغربي، في مكان واحد</div>
+        <h1>The Moroccan curriculum, for teachers and students.</h1>
+        <p class="lead">Teachers prepare lessons, give assignments and quizzes, and follow every student's progress. Students open their courses any time, hand in their work, and see their grades on 20.</p>
+        <div class="cta">
+          <a class="btn accent" href="/auth#register">Start for free</a>
+          <a class="btn secondary" href="/auth">I already have an account</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="small" style="opacity:.8;margin-bottom:.4rem">Levels covered</div>
+        <div class="lv"><span>Primaire</span><span>1ère → 6ème année</span></div>
+        <div class="lv"><span>Collège</span><span>1ère → 3ème année</span></div>
+        <div class="lv"><span>Lycée</span><span>Tronc Commun, 1ère & 2ème Bac</span></div>
+        <div class="lv"><span>Subjects</span><span>Maths, PC, SVT, Français, Philo…</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <h2 class="title">Everything a class needs</h2>
+    <p class="sub">One platform, two spaces: one for the teacher, one for the student.</p>
+    <div class="grid cols-2">
+      <div class="card feature">
+        <div class="ico">👩‍🏫</div>
+        <h3>Teacher space</h3>
+        <p>Plan and run the class from one place.</p>
+        <ul>
+          <li>Prepare lessons with objectives, content, video and files (save as draft or publish)</li>
+          <li>Give assignments with a due date and grade them on 20 with feedback</li>
+          <li>Create quizzes that are corrected automatically</li>
+          <li>Track each student: lessons done, averages, students at risk</li>
+          <li>Answer student questions and post announcements</li>
+        </ul>
+      </div>
+      <div class="card feature">
+        <div class="ico">🎒</div>
+        <h3>Student space</h3>
+        <p>Learn at your own pace, any time.</p>
+        <ul>
+          <li>Course catalogue for every level, open 24/7</li>
+          <li>Submit assignments (text or files) and see your grade and feedback</li>
+          <li>Take quizzes and see the correction right away</li>
+          <li>My progress: averages per subject and general average</li>
+          <li>Deadline calendar, personal notes, study timer, ask the teacher</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid cols-4" style="margin-top:1rem">
+      <div class="card feature"><div class="ico">📚</div><h3>Lessons</h3><p>Structured by level and subject, like the official programme.</p></div>
+      <div class="card feature"><div class="ico">📝</div><h3>Assignments</h3><p>Hand in work online, late work is marked automatically.</p></div>
+      <div class="card feature"><div class="ico">✅</div><h3>Quizzes</h3><p>Instant correction and statistics per question.</p></div>
+      <div class="card feature"><div class="ico">📈</div><h3>Progress</h3><p>Grades on 20, averages and progress bars.</p></div>
+    </div>
+  </section>
+  <footer class="footer">Madrasti · مدرستي — Moroccan curriculum learning platform</footer>
+  <script src="/js/common.js"></script>
+  <script>
+    const u = store.user;
+    if (store.token && u) {
+      document.getElementById('navLinks').innerHTML = `<a class="btn accent" href="/${u.role}">Open my space →</a>`;
+    }
+  </script>
+</body>
+</html>
