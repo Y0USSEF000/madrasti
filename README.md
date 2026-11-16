@@ -184,7 +184,7 @@ All routes are under `/api` and return JSON. Protected routes expect `Authorizat
 
 ## Data and credits
 
-The school list comes from [OpenStreetMap](https://www.openstreetmap.org/copyright), © OpenStreetMap contributors, under the Open Database License (ODbL).
+The school list comes from [OpenStreetMap](https://www.openstreetmap.org/copyright), © OpenStreetMap contributors, under the Open Database License (ODbL). See [NOTICE.md](NOTICE.md).
 
 ## License
 
